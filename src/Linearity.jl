@@ -1,15 +1,15 @@
 module Linearity
 
 
-export linearity
+export nonlinearity
 
 
 # Export struct to use in linearity functions
 abstract type linMethod end
 struct RMS <: linMethod end
-struct Normal <: linMethod end
+struct Simple <: linMethod end
 
-export linMethod, RMS, Normal
+export linMethod, RMS, Simple
 
 
 
