@@ -2,6 +2,7 @@ module Linearity
 
 
 export nonlinearity
+export mean_unique_vals
 
 
 # Export struct to use in linearity functions
@@ -14,6 +15,8 @@ export linMethod, RMS, Simple
 
 
 include("nonlinearity.jl")
+
+using Statistics
 
 
 end # module Linearity

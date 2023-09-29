@@ -134,3 +134,91 @@ end
 
 
 
+@testset "Mean values before nonlinearity" begin
+    
+    # simplified version with already sorted x and y
+    x = [1,1,  2, 3,  4,4,  5, 6, 7]
+    y = [1,2,  3, 4,  5,6,  7, 8, 9]
+    # result should be 
+    # x = [1, 2, 3, 4, 5, 6, 7]
+    # y = [1.5, 3, 4, 5.5, 7, 8, 9]
+
+    lin = nonlinearity(x,y)
+    close("all")  
+    figure()
+    plot(x, y,".")
+    plot(x, lin.y_fit)
+    ax = twinx()
+    ax.plot(x,lin.nonlinearity,color="tab:red",alpha=.2)
+    
+    (x_unique, y_mean, y_std) = mean_unique_vals(x,y,3)
+
+    # linearity with mean values
+    lin = nonlinearity(x_unique,y_mean)
+    figure()
+    errorbar(x_unique, y_mean,y_std, fmt=".")
+    plot(x_unique, lin.y_fit)
+    ax = twinx()
+    ax.plot(x_unique,lin.nonlinearity,color="tab:red",alpha=.2)
+
+
+    ## Sine wave simulation
+    t = 1:0.01:1000
+    x = @. 10*sin(2π*1*t)
+    noise = 0.8
+    y = x .+ noise*rand(length(x)) .- noise*rand(length(x))
+
+    figure()
+    plot(t,x)
+    plot(t,y)
+
+    lin = nonlinearity(x,y)
+    figure()
+    plot(x, y,".")
+    plot(x, lin.y_fit)
+    ax = twinx()
+    ax.plot(x,lin.nonlinearity*100,color="tab:red",alpha=.2)
+    title("Default linearity")
+
+
+    # just one cycle
+    x_cut = x[1:100]
+    y_cut = y[1:100]
+    t_cut = t[1:100]
+
+    figure()
+    plot(t_cut,x_cut)
+    plot(t_cut,y_cut)
+
+    lin = nonlinearity(x_cut,y_cut)
+    figure()
+    plot(x_cut, y_cut,".")
+    plot(x_cut, lin.y_fit)
+    ax = twinx()
+    ax.plot(x_cut,lin.nonlinearity*100,color="tab:red",alpha=.2)
+    title("One cycle linearity")
+
+
+
+
+    # linearity with mean values
+    ind = sortperm(x)
+    figure()
+    plot(t,x[ind])
+    plot(t,y[ind])
+
+    (x_unique, y_mean, y_std) = mean_unique_vals(x,y,1)
+    lin = nonlinearity(x_unique,y_mean)
+    figure()
+    errorbar(x_unique, y_mean,y_std, fmt=".")
+    plot(x_unique, lin.y_fit)
+    ax = twinx()
+    ax.plot(x_unique,lin.nonlinearity*100,color="tab:red",alpha=.2)
+    title("Mean values linearity")
+
+
+
+    
+
+    
+end
