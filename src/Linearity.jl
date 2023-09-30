@@ -13,9 +13,12 @@ struct Simple <: linMethod end
 export linMethod, RMS, Simple
 
 
-
+# Local dependencies
 include("nonlinearity.jl")
+include("auxiliary.jl")
 
+
+# external dependencies
 using Statistics
 
 

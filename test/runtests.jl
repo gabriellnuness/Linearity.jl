@@ -129,7 +129,33 @@ end
 
 
 
+@testset "Mean of unique values" begin
+    
+    # simplified version with already sorted x and y
+    x = [1,1,  2, 3,  4,4,  5, 6, 7] 
+    y = [1,2,  3, 4,  5,6,  7, 8, 9]
+    # should restult in the following
+    x_res = [1, 2, 3, 4, 5, 6, 7]
+    y_res = [1.5, 3, 4, 5.5, 7, 8, 9]
+    y_std = [√2/2,0,0,√2/2,0,0,0]
 
+    (x_unique, y_mean, y_std) = mean_unique_vals(x,y,1)
+    @test x_unique == Float32.(x_res)
+    @test y_mean == Float32.(y_res)
+    @test y_std ≈ Float32.(y_std)
+
+
+    # out of order test
+    x = [1,1,  4,4,  5, 6, 7, 2, 3] 
+    y = [1,2,  5,6,  7, 8, 9, 3, 4]
+
+    (x_unique, y_mean, y_std) = mean_unique_vals(x,y,1)
+    @test x_unique == Float32.(x_res)
+    @test y_mean == Float32.(y_res)
+    @test y_std ≈ Float32.(y_std)
+
+
+end
 
 
 
@@ -139,9 +165,6 @@ end
     # simplified version with already sorted x and y
     x = [1,1,  2, 3,  4,4,  5, 6, 7]
     y = [1,2,  3, 4,  5,6,  7, 8, 9]
-    # result should be 
-    # x = [1, 2, 3, 4, 5, 6, 7]
-    # y = [1.5, 3, 4, 5.5, 7, 8, 9]
 
     lin = nonlinearity(x,y)
     close("all")  
@@ -214,11 +237,7 @@ end
     plot(x_unique, lin.y_fit)
     ax = twinx()
     ax.plot(x_unique,lin.nonlinearity*100,color="tab:red",alpha=.2)
-    title("Mean values linearity")
-
-
-
-    
+    title("Mean values linearity") 
 
     
 end
