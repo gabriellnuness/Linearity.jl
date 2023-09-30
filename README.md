@@ -1,5 +1,5 @@
 # Linearity.jl
 
-[](doc/ex_default.pdf)
-[](doc/ex_simple.pdf)
-[](doc/ex_rms.pdf)
+![image](doc/ex_default.svg)
+![image](doc/ex_simple.svg)
+![image](doc/ex_rms.svg)

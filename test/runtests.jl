@@ -5,7 +5,7 @@ using PyPlot
 
 
 
-close("all")
+
 @testset "Ideal nonlienarity test" begin
 
 # nonlinearity zero
@@ -97,32 +97,44 @@ end
 @testset "Random tests" begin
 
 # Random tests
-x = sort(100 .* rand(1000) .- 50)
-y = sort(100 .* rand(1000) .- 50)
+x = sort(100 .* randn(1000) .- 50)
+y = x .+ 0.01.*randn(1000)
 
 lin = nonlinearity(x, y)
 figure()
 plot(x, y,".")
-plot(x, lin.y_fit)
+plot(x, lin.y_fit, color="black")
+    title(L"Default: $\frac{x-x_{fit}}{x[end] - x[1]}$")
+    ylabel("output")
+    xlabel("input")
 ax = twinx()
-ax.plot(x,lin.nonlinearity,color="tab:red")
-title(L"Default: $\frac{x-x_{fit}}{x[end] - x[1]}$")
+ax.plot(x,lin.nonlinearity*1e6,color="tab:red",alpha=.8)
+    ax.spines["right"].set_visible(true)
+    ax.set_ylabel("Error [ppm]", color="tab:red",alpha=.8)
 
 lin = nonlinearity(x,y, Simple)
 figure()
 plot(x, y,".")
-plot(x, lin.y_fit)
+plot(x, lin.y_fit, color="black")
+    ylabel("output")
+    xlabel("input")
 ax = twinx()
-ax.plot(x,lin.nonlinearity,color="tab:red")
-title(L"Simple: $\frac{y-y_{fit}}{y_{fit}}$")
+ax.plot(x,lin.nonlinearity*1e6,color="tab:red",alpha=.8)
+    ax.spines["right"].set_visible(true)
+    ax.set_ylabel("Error [ppm]", color="tab:red",alpha=.8)
+    title(L"Simple: $\frac{y-y_{fit}}{y_{fit}}$")
 
 lin = nonlinearity(x,y, RMS)
 figure()
 plot(x, y,".")
-plot(x, lin.y_fit)
+plot(x, lin.y_fit, color="black")
+    ylabel("output")
+    xlabel("input")
+    title(L"RMS: $\sqrt{\frac{1}{N}\sum_{n=1}^{N}{(y-y_{fit})^2}}$")
 ax = twinx()
-ax.hlines(lin.nonlinearity,x[1],x[end], color="tab:red")
-title(L"RMS: $\sqrt{\frac{1}{N}\sum_{n=1}^{N}{(y-y_{fit})^2}}$")
+ax.hlines(lin.nonlinearity,x[1],x[end], color="tab:red",alpha=.8)
+    ax.spines["right"].set_visible(true)
+    ax.set_ylabel("Error [output unit]", color="tab:red",alpha=.8)
 
 
 end
