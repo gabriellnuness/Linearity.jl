@@ -9,8 +9,9 @@ export mean_unique_vals
 abstract type linMethod end
 struct RMS <: linMethod end
 struct Simple <: linMethod end
+struct Sigma3 <: linMethod end
 
-export linMethod, RMS, Simple
+export linMethod, RMS, Simple, Sigma3
 
 
 # Local dependencies
