@@ -49,7 +49,7 @@ jobs:
           arch: ${{ matrix.arch }}
 
       - name: Cache Julia artifacts
-        uses: julia-actions/julia-cache@v1
+        uses: julia-actions/julia-cache@v2
 
       - name: Build Julia package
         uses: julia-actions/julia-buildpkg@v1
