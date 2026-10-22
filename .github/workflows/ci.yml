@@ -7,6 +7,7 @@ on:
     branches:
       - main
     tags: '*'
+
 jobs:
   test:
     name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -23,9 +24,15 @@ jobs:
           - ubuntu-latest
         arch:
           - x64
+        python:
+          - '3.11'
+
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
 
@@ -35,27 +42,22 @@ jobs:
       - name: Install matplotlib
         run: python -m pip install -U matplotlib
 
-      - uses: actions/checkout@v2
-
-      - uses: julia-actions/setup-julia@v1
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
 
-      - uses: actions/cache@v1
-        env:
-          cache-name: cache-artifacts
-        with:
-          path: ~/.julia/artifacts
-          key: ${{ runner.os }}-test-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-test-${{ env.cache-name }}-
-            ${{ runner.os }}-test-
-            ${{ runner.os }}-
-      - uses: julia-actions/julia-buildpkg@v1
-        env:
-          PYTHON : python
+      - name: Cache Julia artifacts
+        uses: julia-actions/julia-cache@v1
 
-      - uses: julia-actions/julia-runtest@v1
+      - name: Build Julia package
+        uses: julia-actions/julia-buildpkg@v1
+        env:
+          PYTHON: python
 
-      - uses: julia-actions/julia-processcoverage@v1
+      - name: Run tests
+        uses: julia-actions/julia-runtest@v1
+
+      - name: Process coverage
+        uses: julia-actions/julia-processcoverage@v1
