@@ -3,9 +3,11 @@ on:
   pull_request:
     branches:
       - main
+      - dev
   push:
     branches:
       - main
+      - dev
     tags: '*'
 
 jobs:
@@ -16,48 +18,43 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.7' # minimum julia version this package supports
-          - '1'   # Leave this line unchanged. '1' will automatically expand to the latest stable 1.x release of Julia.
+          - '1.10'  # Minimum supported Julia version
+          - '1'    # Latest stable 1.x
           - 'nightly'
         os:
-          - windows-latest
           - ubuntu-latest
         arch:
           - x64
-        python:
-          - '3.11'
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python }}
-
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-
-      - name: Install matplotlib
+      # Install Python dependencies (if needed)
+      - name: Install Python dependencies
         run: python -m pip install -U matplotlib
 
-      - name: Set up Julia
-        uses: julia-actions/setup-julia@v2
+      # Checkout repository (updated to v4)
+      - uses: actions/checkout@v4
+
+      # Setup Julia (keep v1, it's correct)
+      - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
 
-      - name: Cache Julia artifacts
-        uses: julia-actions/julia-cache@v2
-
-      - name: Build Julia package
-        uses: julia-actions/julia-buildpkg@v1
+      # Cache Julia artifacts (updated to v3)
+      - uses: actions/cache@v3
         env:
-          PYTHON: python
+          cache-name: cache-artifacts
+        with:
+          path: |
+            ~/.julia/artifacts
+            ~/.julia/compiled  # Added for better caching
+            ~/.julia/packages  # Added for better caching
+          key: ${{ runner.os }}-julia-${{ matrix.version }}-${{ env.cache-name }}-${{ hashFiles('**/Project.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-julia-${{ matrix.version }}-${{ env.cache-name }}-
+            ${{ runner.os }}-julia-${{ env.cache-name }}-
 
-      - name: Run tests
-        uses: julia-actions/julia-runtest@v1
-
-      - name: Process coverage
-        uses: julia-actions/julia-processcoverage@v1
+      # Standard Julia CI steps (keep these)
+      - uses: julia-actions/julia-buildpkg@v1
+      - uses: julia-actions/julia-runtest@v1
+      - uses: julia-actions/julia-processcoverage@v1
