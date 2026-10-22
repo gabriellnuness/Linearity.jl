@@ -1,4 +1,6 @@
 # Linearity.jl
+[![CI](https://github.com/gabriellnuness/Linearity.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/gabriellnuness/Linearity.jl/actions/workflows/ci.yml)
+
 
 Julia package to measure the nonlinearity of a sensor (e.g. a gyroscope) from calibration data. It fits a least-squares line to output vs. input and reports how far the data deviates from it.
 
